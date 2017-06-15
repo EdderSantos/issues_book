@@ -3,7 +3,19 @@ defmodule CliTest do
 
   doctest Issues
 
-  import Issues.CLI, only: [ parse_args: 1 ]
+  import Issues.CLI, only: [ parse_args: 1, sort_into_ascending_order: 1 ]
+
+  test "sort ascending orders the correct way" do
+    result = sort_into_ascending_order(fake_created_at_list(["c", "a", "b"]))
+    issues = for issue <- result, do: Map.get(issue, "created_at")
+    assert issues == ~w{a b c}
+  end
+
+  defp fake_created_at_list(values) do
+    for value <- values,
+    do: %{"created_at" => value, "other_data" => "xxx"}
+  end
+
 
   test ":help returned by option parsing whit -h and --help options" do
     assert parse_args(["-h",  "anything"]) == :help
